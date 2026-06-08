@@ -5,6 +5,8 @@
 
   --cor-primaria: #10b981;
   --cor-primaria-hover: #059669;
+  --cor-destaque: #fcd34d;
+  --cor-destaque-escuro: #f59e0b;
 
   --texto-principal: #0f172a;
   --texto-secundario: #64748b;
@@ -82,20 +84,6 @@
 
 .menu-toggle:hover {
   color: var(--cor-primaria);
-}
-
-.header {
-  width: 100%;
-  position: sticky;
-  top: 0;
-  z-index: 50;
-
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(18px);
-
-  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
-
-  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.04);
 }
 
 .hero-inner {
@@ -306,7 +294,7 @@
 
 .impact-section {
   display: flex;
-  background-color: var(--cor-fundo-impacto);
+  background-color: var(--cor-primaria);
   border-radius: var(--radius-xl);
   box-shadow: var(--sombra-lg);
   overflow: hidden;
@@ -315,7 +303,7 @@
 
 .illustrative-area {
   flex: 1;
-  background-color: var(--cor-fundo-impacto-destaque);
+  background-color: var(--cor-primaria-hover);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -328,7 +316,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: var(--cor-destaque-claro);
+  color: var(--cor-destaque);
 }
 
 .illustration-placeholder svg {
@@ -391,7 +379,7 @@
 .stat-value {
   font-size: 52px;
   font-weight: 900;
-  color: var(--cor-destaque-claro);
+  color: var(--cor-destaque);
   line-height: 1;
   margin-bottom: 12px;
   display: flex;
@@ -416,12 +404,12 @@
 .cta-section {
   text-align: center;
   padding: 80px 40px;
-  background-color: var(--cor-fundo-cta);
+  background: linear-gradient(135deg, var(--cor-primaria) 0%, var(--cor-primaria-hover) 100%);
   border-radius: var(--radius-xl);
   margin-bottom: 80px;
   color: var(--texto-claro);
   box-shadow: var(--sombra-lg);
-  border: 1px solid #1e293b;
+  border: 1px solid var(--cor-primaria);
 }
 
 .cta-section h2 {
@@ -439,19 +427,20 @@
 .btn-large {
   display: inline-block;
   padding: 20px 48px;
-  background-color: var(--cor-primaria);
-  color: #ffffff;
+  background-color: var(--texto-claro);
+  color: var(--cor-primaria);
   text-decoration: none;
   font-weight: 700;
   font-size: 18px;
   border-radius: 100px;
   transition: all 0.3s ease;
-  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+  border: none;
+  cursor: pointer;
 }
-a .btn-large:hover {
-  background-color: var(--cor-primaria-hover);
+
+.btn-large:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 25px rgba(16, 185, 129, 0.5);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
 }
 
 @media (max-width: 1024px) {
