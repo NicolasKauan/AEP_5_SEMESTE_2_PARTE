@@ -2,11 +2,15 @@ package com.aep.segundaParte.Model;
 
 import com.aep.segundaParte.enums.NivelPrioridade;
 import com.aep.segundaParte.enums.StatusSolicitacao;
+import com.aep.segundaParte.exception.RegraNegocioException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
@@ -46,13 +50,22 @@ public class Solicitacao {
     @Column(nullable = false)
     private LocalDateTime dataCriacao;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "criador_id")
+    private Usuario criador;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "prestador_id")
+    private Usuario prestadorResponsavel;
+
     public Solicitacao(
             String protocolo,
             String nome,
             String cpf,
             String descricao,
             NivelPrioridade prioridade,
-            String prazo) {
+            String prazo,
+            Usuario criador) {
         this.protocolo = protocolo.toUpperCase();
         this.nomeCidadao = (nome == null) ? "ANÔNIMO" : nome;
         this.cpf = (cpf == null) ? "N/A" : cpf;
@@ -61,5 +74,35 @@ public class Solicitacao {
         this.status = StatusSolicitacao.ABERTA;
         this.prazo = prazo;
         this.dataCriacao = LocalDateTime.now();
+        this.criador = criador;
+    }
+
+    public void aceitar(Usuario prestador) {
+        if (status != StatusSolicitacao.ABERTA) {
+            throw new RegraNegocioException("Somente chamados abertos podem ser aceitos.");
+        }
+        this.prestadorResponsavel = prestador;
+        this.status = StatusSolicitacao.ANDAMENTO;
+    }
+
+    public void desistir(Usuario prestador) {
+        if (status != StatusSolicitacao.ANDAMENTO) {
+            throw new RegraNegocioException("Somente chamados em andamento podem ser desistidos.");
+        }
+        if (prestadorResponsavel == null || !prestadorResponsavel.getId().equals(prestador.getId())) {
+            throw new RegraNegocioException("Apenas o prestador responsável pode desistir deste chamado.");
+        }
+        this.prestadorResponsavel = null;
+        this.status = StatusSolicitacao.ABERTA;
+    }
+
+    public void concluir(Usuario prestador) {
+        if (status != StatusSolicitacao.ANDAMENTO) {
+            throw new RegraNegocioException("Somente chamados em andamento podem ser concluídos.");
+        }
+        if (prestadorResponsavel == null || !prestadorResponsavel.getId().equals(prestador.getId())) {
+            throw new RegraNegocioException("Apenas o prestador responsável pode concluir este chamado.");
+        }
+        this.status = StatusSolicitacao.FINALIZADA;
     }
 }

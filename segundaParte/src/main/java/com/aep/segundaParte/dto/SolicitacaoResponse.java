@@ -1,6 +1,7 @@
 package com.aep.segundaParte.dto;
 
 import com.aep.segundaParte.Model.Solicitacao;
+import com.aep.segundaParte.Model.Usuario;
 import com.aep.segundaParte.enums.NivelPrioridade;
 import com.aep.segundaParte.enums.StatusSolicitacao;
 import java.time.LocalDateTime;
@@ -14,7 +15,9 @@ public record SolicitacaoResponse(
         StatusSolicitacao status,
         String statusDescricao,
         String prazo,
-        LocalDateTime dataCriacao) {
+        LocalDateTime dataCriacao,
+        String criadorNome,
+        String prestadorNome) {
 
     public static SolicitacaoResponse from(Solicitacao solicitacao) {
         return new SolicitacaoResponse(
@@ -26,6 +29,12 @@ public record SolicitacaoResponse(
                 solicitacao.getStatus(),
                 solicitacao.getStatus().getDescricao(),
                 solicitacao.getPrazo(),
-                solicitacao.getDataCriacao());
+                solicitacao.getDataCriacao(),
+                nomeUsuario(solicitacao.getCriador()),
+                nomeUsuario(solicitacao.getPrestadorResponsavel()));
+    }
+
+    private static String nomeUsuario(Usuario usuario) {
+        return usuario == null ? null : usuario.getNome();
     }
 }
