@@ -14,7 +14,7 @@ async function carregar() {
   erro.value = ''
   carregando.value = true
   try {
-    chamados.value = await api.listarChamadosPrestador()
+    chamados.value = await api.listarParaPrestador()
   } catch (e) {
     erro.value = e instanceof Error ? e.message : 'Erro ao carregar chamados.'
   } finally {
@@ -26,9 +26,9 @@ async function executar(operacao: 'aceitar' | 'desistir' | 'concluir', protocolo
   erro.value = ''
   acao.value = protocolo
   try {
-    if (operacao === 'aceitar') await api.aceitarChamado(protocolo)
-    if (operacao === 'desistir') await api.desistirChamado(protocolo)
-    if (operacao === 'concluir') await api.concluirChamado(protocolo)
+    if (operacao === 'aceitar') await api.aceitar(protocolo)
+    if (operacao === 'desistir') await api.desistir(protocolo)
+    if (operacao === 'concluir') await api.concluir(protocolo)
     await carregar()
   } catch (e) {
     erro.value = e instanceof Error ? e.message : 'Erro ao atualizar chamado.'

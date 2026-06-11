@@ -4,11 +4,11 @@ import ToastContainer from '@/components/ToastContainer.vue'
 </script>
 
 <template>
-  <div>
+  <div class="min-h-screen bg-slate-50 text-slate-900">
     <Navbar />
-    <div class="container mx-auto mt-6">
+    <main>
       <RouterView />
-    </div>
+    </main>
     <ToastContainer />
   </div>
 </template>
@@ -16,5 +16,10 @@ import ToastContainer from '@/components/ToastContainer.vue'
 <style>
 /* keep minimal fallback styles in case Tailwind isn't installed */
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: Inter, Arial, sans-serif; }
+html, body, #app { min-height: 100%; }
+body {
+  font-family: Inter, Arial, sans-serif;
+  background: #f8fafc;
+  color: #0f172a;
+}
 </style>

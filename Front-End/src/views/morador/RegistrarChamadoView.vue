@@ -2,7 +2,10 @@
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import Modal from '@/components/Modal.vue'
+import Button from '@/components/Button.vue'
+import Input from '@/components/Input.vue'
 import { api } from '@/services/api'
+import { toast } from '@/services/toast'
 import type { Solicitacao } from '@/types'
 
 const route = useRoute()
@@ -20,23 +23,10 @@ const sucesso = ref<Solicitacao | null>(null)
 const carregando = ref(false)
 
 function pontosObstrucao() {
-  // mapping per spec: Não bloqueia (1), Parcial (2), Total (4)
   if (obstrucao.value === 3) return 4
   if (obstrucao.value === 2) return 2
   return 1
 }
-
-function pontosLocal() {
-  // Residencial (1), Parque/Escola (2), Ecológico (3), Saúde (4)
-  return local.value
-}
-
-function pontosVolume() {
-  // Pequeno (1), Moderado (2), Excessivo (3), Espalhado (4)
-  return volume.value
-}
-
-import { toast } from '@/services/toast'
 
 async function enviar() {
   erro.value = ''
@@ -49,8 +39,8 @@ async function enviar() {
       cpf: anonimo.value ? null : cpf.value,
       pontosObstrucao: pontosObstrucao(),
       pontosRisco: risco.value,
-      pontosLocal: pontosLocal(),
-      pontosVolume: pontosVolume(),
+      pontosLocal: local.value,
+      pontosVolume: volume.value,
       endereco: endereco.value,
       observacao: observacao.value,
     })
@@ -64,175 +54,142 @@ async function enviar() {
   }
 }
 
-function copyProtocolo() {
-  if (!sucesso?.protocolo) return
-  navigator.clipboard.writeText(sucesso.protocolo)
+async function copyProtocolo() {
+  if (!sucesso.value?.protocolo) return
+  await navigator.clipboard.writeText(sucesso.value.protocolo)
   toast.success('Protocolo copiado para a área de transferência')
 }
 </script>
 
 <template>
-  <div class="card wide">
-    <h1>Registrar Reclamação</h1>
-    <p class="subtitle">Abra um novo chamado de zeladoria</p>
+  <div class="bg-white rounded-[2.5rem] p-8 sm:p-12 shadow-2xl shadow-slate-200/50 border border-slate-100">
+    <header class="mb-10">
+      <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Nova Solicitação</h2>
+      <p class="text-slate-500 mt-1">Forneça o máximo de detalhes para uma resolução rápida.</p>
+    </header>
 
-    <form @submit.prevent="enviar">
-      <label class="checkbox">
-        <input v-model="anonimo" type="checkbox" />
-        Registrar de forma anônima
-      </label>
+    <form @submit.prevent="enviar" class="space-y-10">
+      <!-- Identificação -->
+      <section class="space-y-6">
+        <div class="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+          <input
+            v-model="anonimo"
+            type="checkbox"
+            id="anonimo"
+            class="w-5 h-5 rounded-lg border-slate-300 text-emerald-600 focus:ring-emerald-500 transition-all"
+          />
+          <label for="anonimo" class="text-sm font-bold text-slate-700 cursor-pointer select-none">
+            Registrar de forma anônima
+          </label>
+        </div>
 
-      <template v-if="!anonimo">
-        <label>
-          Nome completo
-          <input v-model="nome" />
-        </label>
-        <label>
-          CPF
-          <input v-model="cpf" />
-        </label>
-      </template>
+        <div v-if="!anonimo" class="grid sm:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2">
+          <Input v-model="nome" label="Seu nome" placeholder="Nome completo" required />
+          <Input v-model="cpf" label="Seu CPF" placeholder="000.000.000-00" required />
+        </div>
+      </section>
 
-      <fieldset>
-        <legend>Obstrução da via</legend>
-        <label><input v-model="obstrucao" type="radio" :value="1" /> Não bloqueia</label>
-        <label><input v-model="obstrucao" type="radio" :value="2" /> Parcial</label>
-        <label><input v-model="obstrucao" type="radio" :value="3" /> Total</label>
-      </fieldset>
+      <!-- Detalhes do Problema -->
+      <section class="grid gap-8">
+        <div class="space-y-4">
+          <p class="text-sm font-black text-slate-400 uppercase tracking-widest px-1">Nível de Obstrução</p>
+          <div class="grid grid-cols-3 gap-3">
+            <button v-for="(v, i) in ['Não bloqueia', 'Parcial', 'Total']" :key="i" type="button" @click="obstrucao = i+1"
+              :class="['py-3 px-4 rounded-2xl border text-xs font-bold transition-all', obstrucao === i+1 ? 'bg-emerald-50 border-emerald-500 text-emerald-700 ring-4 ring-emerald-500/5' : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300']">
+              {{ v }}
+            </button>
+          </div>
+        </div>
 
-      <fieldset>
-        <legend>Risco sanitário</legend>
-        <label><input v-model="risco" type="radio" :value="1" /> Seco</label>
-        <label><input v-model="risco" type="radio" :value="2" /> Ensacado</label>
-        <label><input v-model="risco" type="radio" :value="3" /> Exposto</label>
-        <label><input v-model="risco" type="radio" :value="4" /> Dengue</label>
-      </fieldset>
+        <div class="space-y-4">
+          <p class="text-sm font-black text-slate-400 uppercase tracking-widest px-1">Risco Sanitário / Tipo</p>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <button v-for="(v, i) in ['Seco', 'Ensacado', 'Exposto', 'Dengue']" :key="i" type="button" @click="risco = i+1"
+              :class="['py-3 px-2 rounded-2xl border text-xs font-bold transition-all', risco === i+1 ? 'bg-emerald-50 border-emerald-500 text-emerald-700 ring-4 ring-emerald-500/5' : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300']">
+              {{ v }}
+            </button>
+          </div>
+        </div>
 
-      <fieldset>
-        <legend>Tipo de local</legend>
-        <label><input v-model="local" type="radio" :value="1" /> Residencial</label>
-        <label><input v-model="local" type="radio" :value="2" /> Parque/Escola</label>
-        <label><input v-model="local" type="radio" :value="3" /> Ecológico</label>
-        <label><input v-model="local" type="radio" :value="4" /> Saúde</label>
-      </fieldset>
+        <div class="space-y-4">
+          <p class="text-sm font-black text-slate-400 uppercase tracking-widest px-1">Local da Ocorrência</p>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <button v-for="(v, i) in ['Residencial', 'Parque/Escola', 'Ecológico', 'Saúde']" :key="i" type="button" @click="local = i+1"
+              :class="['py-3 px-2 rounded-2xl border text-xs font-bold transition-all', local === i+1 ? 'bg-emerald-50 border-emerald-500 text-emerald-700 ring-4 ring-emerald-500/5' : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300']">
+              {{ v }}
+            </button>
+          </div>
+        </div>
 
-      <fieldset>
-        <legend>Volume do lixo</legend>
-        <label><input v-model="volume" type="radio" :value="1" /> Pequeno</label>
-        <label><input v-model="volume" type="radio" :value="2" /> Moderado</label>
-        <label><input v-model="volume" type="radio" :value="3" /> Excessivo</label>
-        <label><input v-model="volume" type="radio" :value="4" /> Espalhado</label>
-      </fieldset>
+        <div class="space-y-4">
+          <p class="text-sm font-black text-slate-400 uppercase tracking-widest px-1">Volume Estimado</p>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <button v-for="(v, i) in ['Pequeno', 'Moderado', 'Excessivo', 'Espalhado']" :key="i" type="button" @click="volume = i+1"
+              :class="['py-3 px-2 rounded-2xl border text-xs font-bold transition-all', volume === i+1 ? 'bg-emerald-50 border-emerald-500 text-emerald-700 ring-4 ring-emerald-500/5' : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300']">
+              {{ v }}
+            </button>
+          </div>
+        </div>
+      </section>
 
-      <label>
-        Endereço da ocorrência
-        <input v-model="endereco" required />
-      </label>
+      <!-- Localização e Obs -->
+      <section class="space-y-6">
+        <Input v-model="endereco" label="Endereço exato" placeholder="Rua, número, bairro..." required />
 
-      <label>
-        Observação adicional
-        <textarea v-model="observacao" rows="3" />
-      </label>
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-semibold text-slate-700 px-1">Observações adicionais</label>
+          <textarea
+            v-model="observacao"
+            rows="4"
+            placeholder="Descreva pontos de referência ou detalhes do descarte..."
+            class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3.5 text-sm text-slate-900 outline-none transition-all focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 hover:border-slate-300"
+          ></textarea>
+        </div>
+      </section>
 
-      <p v-if="erro" class="erro">{{ erro }}</p>
-
-      <div v-if="sucesso" class="sucesso">
-        <strong>Protocolo gerado: {{ sucesso.protocolo }}</strong>
-        <p>Prioridade: {{ sucesso.prioridade }} — Prazo: {{ sucesso.prazo }}</p>
+      <div v-if="erro" class="p-4 bg-red-50 border border-red-100 rounded-2xl text-sm text-red-600 font-medium text-center">
+        {{ erro }}
       </div>
 
-      <button type="submit" :disabled="carregando">
-        {{ carregando ? 'Enviando...' : 'Registrar chamado' }}
-      </button>
+      <Button type="submit" :loading="carregando" full-width class="h-16 text-lg">
+        Registrar Chamado
+      </Button>
     </form>
 
     <Modal :show="!!sucesso" @close="sucesso = null">
-      <div class="text-center">
-        <h2 class="text-2xl font-bold mb-2">Protocolo</h2>
-        <div class="flex items-center justify-center gap-3">
-          <div class="text-3xl font-mono">{{ sucesso?.protocolo }}</div>
-          <button class="px-3 py-1 bg-gray-200 rounded" @click="copyProtocolo">Copiar</button>
+      <div class="p-4 text-center">
+        <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
         </div>
-        <p class="mt-2">Prioridade: {{ sucesso?.prioridade }} — Prazo: {{ sucesso?.prazo }}</p>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-2">Sucesso!</h2>
+        <p class="text-slate-500 mb-8">Seu protocolo foi gerado com sucesso.</p>
+
+        <div class="bg-slate-50 rounded-3xl p-8 border border-slate-100 mb-8">
+           <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Número do Protocolo</p>
+           <div class="flex items-center justify-center gap-4">
+             <span class="text-4xl font-black text-slate-900 tracking-tighter">{{ sucesso?.protocolo }}</span>
+             <button @click="copyProtocolo" class="p-3 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 transition-colors text-slate-600 shadow-sm">
+               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+             </button>
+           </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 text-left mb-8">
+          <div class="p-4 rounded-2xl bg-emerald-50/50 border border-emerald-100">
+            <p class="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Prioridade</p>
+            <p class="text-lg font-bold text-emerald-700">{{ sucesso?.prioridade }}</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Prazo Est.</p>
+            <p class="text-lg font-bold text-slate-700">{{ sucesso?.prazo }}</p>
+          </div>
+        </div>
+
+        <Button @click="sucesso = null" variant="secondary" full-width>
+          Fechar
+        </Button>
       </div>
     </Modal>
-  </div>
-</template>
-</script>
-
-<template>
-  <div class="card wide">
-    <h1>Registrar Reclamação</h1>
-    <p class="subtitle">Abra um novo chamado de zeladoria</p>
-
-    <form @submit.prevent="enviar">
-      <label class="checkbox">
-        <input v-model="anonimo" type="checkbox" />
-        Registrar de forma anônima
-      </label>
-
-      <template v-if="!anonimo">
-        <label>
-          Nome completo
-          <input v-model="nome" />
-        </label>
-        <label>
-          CPF
-          <input v-model="cpf" />
-        </label>
-      </template>
-
-      <fieldset>
-        <legend>Obstrução da via</legend>
-        <label><input v-model="obstrucao" type="radio" :value="1" /> Não bloqueia</label>
-        <label><input v-model="obstrucao" type="radio" :value="2" /> Parcial</label>
-        <label><input v-model="obstrucao" type="radio" :value="3" /> Total</label>
-      </fieldset>
-
-      <fieldset>
-        <legend>Risco sanitário</legend>
-        <label><input v-model="risco" type="radio" :value="1" /> Seco</label>
-        <label><input v-model="risco" type="radio" :value="2" /> Ensacado</label>
-        <label><input v-model="risco" type="radio" :value="3" /> Dengue</label>
-        <label><input v-model="risco" type="radio" :value="4" /> Exposto</label>
-      </fieldset>
-
-      <fieldset>
-        <legend>Tipo de local</legend>
-        <label><input v-model="local" type="radio" :value="1" /> Residencial</label>
-        <label><input v-model="local" type="radio" :value="2" /> Parque/Escola</label>
-        <label><input v-model="local" type="radio" :value="3" /> Ecológico</label>
-        <label><input v-model="local" type="radio" :value="4" /> Saúde</label>
-      </fieldset>
-
-      <fieldset>
-        <legend>Volume do lixo</legend>
-        <label><input v-model="volume" type="radio" :value="1" /> Espalhado</label>
-        <label><input v-model="volume" type="radio" :value="2" /> Pequeno</label>
-        <label><input v-model="volume" type="radio" :value="3" /> Moderado</label>
-        <label><input v-model="volume" type="radio" :value="4" /> Excessivo</label>
-      </fieldset>
-
-      <label>
-        Endereço da ocorrência
-        <input v-model="endereco" required />
-      </label>
-
-      <label>
-        Observação adicional
-        <textarea v-model="observacao" rows="3" />
-      </label>
-
-      <p v-if="erro" class="erro">{{ erro }}</p>
-
-      <div v-if="sucesso" class="sucesso">
-        <strong>Protocolo gerado: {{ sucesso.protocolo }}</strong>
-        <p>Prioridade: {{ sucesso.prioridade }} — Prazo: {{ sucesso.prazo }}</p>
-      </div>
-
-      <button type="submit" :disabled="carregando">
-        {{ carregando ? 'Enviando...' : 'Registrar chamado' }}
-      </button>
-    </form>
   </div>
 </template>

@@ -19,6 +19,7 @@ export function useAuth() {
     localStorage.setItem('nome', auth.nome)
     localStorage.setItem('email', auth.email)
     localStorage.setItem('tipo', auth.tipo)
+    localStorage.setItem('session', JSON.stringify(auth))
   }
 
   function logout() {
@@ -31,12 +32,13 @@ export function useAuth() {
     localStorage.removeItem('nome')
     localStorage.removeItem('email')
     localStorage.removeItem('tipo')
+    localStorage.removeItem('session')
   }
 
   function homeRoute() {
     if (tipo.value === 'PRESTADOR') return '/prestador/painel'
     if (tipo.value === 'ECOLOGISTA') return '/ecologista/painel'
-    return '/morador/registrar'
+    return '/morador'
   }
 
   return {

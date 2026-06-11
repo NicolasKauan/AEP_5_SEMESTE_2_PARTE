@@ -11,7 +11,7 @@ async function carregar() {
   erro.value = ''
   carregando.value = true
   try {
-    chamados.value = await api.listarChamadosEcologista()
+    chamados.value = await api.listarParaEcologista()
   } catch (e) {
     erro.value = e instanceof Error ? e.message : 'Erro ao carregar chamados.'
   } finally {

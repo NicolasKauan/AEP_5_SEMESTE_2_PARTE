@@ -2,25 +2,28 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 import { subscribe, remove } from '@/services/toast'
 
-const toasts = ref([])
-let unsub: any
+type ToastItem = { id: number; type: 'success' | 'error' | 'info'; message: string }
+
+const toasts = ref<ToastItem[]>([])
+let unsub: (() => void) | null = null
 onMounted(() => {
-  unsub = subscribe((t: any[]) => (toasts.value = t))
+  unsub = subscribe((t: ToastItem[]) => {
+    toasts.value = t
+  })
 })
-onUnmounted(() => unsub && unsub())
+onUnmounted(() => unsub?.())
 </script>
 
 <template>
-  <div class="fixed top-4 right-4 w-80 z-50 flex flex-col gap-2">
-    <div v-for="t in toasts" :key="t.id" :class="['p-3 rounded shadow', t.type==='success'?'bg-green-50 border border-green-200':'', t.type==='error'?'bg-red-50 border border-red-200':'', t.type==='info'?'bg-blue-50 border border-blue-200':'']">
-      <div class="text-sm">
-        {{ t.message }}
-      </div>
-      <div class="text-xs text-gray-500 mt-1 cursor-pointer text-right" @click="remove(t.id)">Fechar</div>
+  <div class="fixed top-4 right-4 z-50 flex w-80 flex-col gap-2">
+    <div v-for="t in toasts" :key="t.id" :class="[
+      'rounded-3xl border p-4 shadow-xl transition',
+      t.type === 'success' ? 'bg-emerald-50 border-emerald-200' : '',
+      t.type === 'error' ? 'bg-rose-50 border-rose-200' : '',
+      t.type === 'info' ? 'bg-sky-50 border-sky-200' : ''
+    ]">
+      <div class="text-sm font-medium text-slate-900">{{ t.message }}</div>
+      <div class="mt-2 text-xs text-slate-500 text-right cursor-pointer hover:text-slate-700" @click="remove(t.id)">Fechar</div>
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { remove } from '@/services/toast'
-</script>

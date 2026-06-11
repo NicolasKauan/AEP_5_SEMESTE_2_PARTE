@@ -26,6 +26,7 @@ export interface Solicitacao {
   status: StatusSolicitacao
   statusDescricao: string
   prazo: string
+  endereco?: string
   dataCriacao: string
   criadorNome: string | null
   prestadorNome: string | null
