@@ -1,61 +1,54 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { api } from '@/services/api'
+
+const router = useRouter()
+const email = ref('')
+const senha = ref('')
+const erro = ref('')
+const carregando = ref(false)
+
+async function entrar() {
+  erro.value = ''
+  carregando.value = true
+  try {
+    const resp: any = await api.login(email.value, senha.value)
+    // redirect by tipo
+    if (resp.tipo === 'MORADOR') router.push('/morador')
+    else if (resp.tipo === 'ECOLOGISTA') router.push('/ecologista/painel')
+    else if (resp.tipo === 'PRESTADOR') router.push('/prestador/painel')
+    else router.push('/')
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : 'Erro ao autenticar'
+    erro.value = msg
+    import('@/services/toast').then(m => m.toast.error(msg))
+  } finally {
+    carregando.value = false
+  }
+}
+</script>
+
 <template>
-  <div class="auth-wrapper">
-    <div class="auth-container">
+  <div class="min-h-screen flex items-center justify-center bg-gray-50">
+    <div class="w-full max-w-md bg-white p-6 rounded shadow">
+      <h2 class="text-2xl font-semibold mb-4">Entrar</h2>
 
-      <!-- Lado Esquerdo: LOGIN -->
-      <section class="auth-section">
-        <h2>LOGIN</h2>
+      <label class="block mb-2 text-sm">E-mail
+        <input v-model="email" type="email" class="w-full border rounded px-3 py-2 mt-1" />
+      </label>
 
-        <div class="form-group">
-          <label>E-MAIL</label>
-          <input type="email" />
-        </div>
+      <label class="block mb-2 text-sm">Senha
+        <input v-model="senha" type="password" class="w-full border rounded px-3 py-2 mt-1" />
+      </label>
 
-        <div class="form-group">
-          <label>SENHA</label>
-          <input type="password" />
-        </div>
+      <p v-if="erro" class="text-red-600 text-sm mb-2">{{ erro }}</p>
 
-        <a href="#" class="forgot-link">Esqueceu a senha?</a>
-        <button class="btn-filled">ENTRAR</button>
+      <button class="w-full bg-blue-600 text-white py-2 rounded" :disabled="carregando" @click="entrar">
+        {{ carregando ? 'Entrando...' : 'Entrar' }}
+      </button>
 
-        <div class="divider"><span>V</span></div>
-
-        <p class="no-account">Não tem conta?</p>
-        <button class="btn-outlined">CADASTRE-SE</button>
-      </section>
-
-      <div class="vertical-line"></div>
-
-      <!-- Lado Direito: CADASTRO -->
-      <section class="auth-section">
-        <h2>CADASTRO</h2>
-
-        <p class="profile-label">SELECIONE SEU PERFIL</p>
-        <div class="profile-buttons">
-          <button class="btn-profile active">PRESTADOR DE SERVIÇO</button>
-          <button class="btn-profile">MORADOR</button>
-          <button class="btn-profile">ECOLOGISTA</button>
-        </div>
-
-        <div class="form-group">
-          <label>NOME COMPLETO</label>
-          <input type="text" />
-        </div>
-
-        <div class="form-group">
-          <label>TELEFONE</label>
-          <input type="text" />
-        </div>
-
-        <div class="form-group">
-          <label>LOCALIZAÇÃO</label>
-          <input type="text" />
-        </div>
-
-        <button class="btn-filled mt-auto">CRIAR CONTA</button>
-      </section>
-
+      <p class="text-center text-sm mt-4">Não tem uma conta? <a href="/cadastro" class="text-blue-600">Registre-se</a></p>
     </div>
   </div>
 </template>
