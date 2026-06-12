@@ -37,11 +37,11 @@ function onInput(event: Event) {
         :required="required"
         @input="onInput"
         :class="[
-          'w-full rounded-2xl border bg-white px-4 py-3.5 text-sm text-slate-900 outline-none transition-all duration-200',
+          'w-full rounded-xl border bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-all duration-200',
           'placeholder:text-slate-400',
           error
             ? 'border-red-300 bg-red-50/30 focus:border-red-500 focus:ring-4 focus:ring-red-500/10'
-            : 'border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 hover:border-slate-300'
+            : 'border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 hover:border-slate-300 shadow-sm'
         ]"
       />
     </div>

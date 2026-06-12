@@ -1,0 +1,177 @@
+:root {
+  --pm-green: #10b981;
+  --pm-green-dark: #059669;
+  --pm-green-light: #d1fae5;
+  --pm-green-ring: #a7f3d0;
+
+  --pm-slate-50: #f8fafc;
+  --pm-slate-100: #f1f5f9;
+  --pm-slate-200: #e2e8f0;
+  --pm-slate-400: #94a3b8;
+  --pm-slate-500: #64748b;
+  --pm-slate-700: #334155;
+  --pm-slate-900: #0f172a;
+
+  --pm-shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.05);
+  --pm-shadow-md: 0 12px 40px rgba(0, 0, 0, 0.08);
+
+  --pm-radius-lg: 24px;
+  --pm-radius-xl: 32px;
+
+  --pm-font: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* ── Root & layout ───────────────────────────── */
+.painel-root {
+  min-height: 100vh;
+  background: var(--pm-slate-50);
+  font-family: var(--pm-font);
+  color: var(--pm-slate-900);
+  padding: 72px 0 100px;
+}
+
+.painel-container {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+/* ── Header ──────────────────────────────────── */
+.painel-header {
+  text-align: center;
+  margin-bottom: 52px;
+}
+
+/* Small icon badge above title */
+.painel-icon-wrap {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: var(--pm-green-light);
+  border: 1px solid var(--pm-green-ring);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  color: var(--pm-green-dark);
+  transition: background 0.25s;
+}
+
+.painel-icon-wrap:hover {
+  background: var(--pm-green);
+  color: #fff;
+}
+
+.painel-icon {
+  width: 26px;
+  height: 26px;
+}
+
+.painel-title {
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 900;
+  letter-spacing: -0.8px;
+  color: var(--pm-slate-900);
+  margin: 0 0 12px;
+  line-height: 1.1;
+}
+
+.painel-sub {
+  font-size: 16px;
+  color: var(--pm-slate-500);
+  line-height: 1.65;
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+/* ── Segmented tab control ───────────────────── */
+.tab-track {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--pm-slate-100);
+  border: 1px solid var(--pm-slate-200);
+  border-radius: var(--pm-radius-xl);
+  padding: 6px;
+  max-width: 400px;
+  margin: 0 auto 48px;
+}
+
+.tab-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 11px 20px;
+  border-radius: 20px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--pm-font);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--pm-slate-500);
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.tab-btn:hover:not(.tab-btn--active) {
+  color: var(--pm-slate-700);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+/* Active state */
+.tab-btn--active {
+  background: #fff;
+  color: var(--pm-green-dark);
+  box-shadow: var(--pm-shadow-sm);
+}
+
+.tab-btn--active .tab-icon {
+  color: var(--pm-green);
+}
+
+.tab-icon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  transition: color 0.25s;
+}
+
+/* ── Content area ────────────────────────────── */
+.painel-content {
+  animation: slideUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Responsive ──────────────────────────────── */
+@media (max-width: 640px) {
+  .painel-root {
+    padding: 48px 0 72px;
+  }
+
+  .painel-container {
+    padding: 0 20px;
+  }
+
+  .tab-track {
+    max-width: 100%;
+  }
+
+  .tab-btn {
+    font-size: 12px;
+    padding: 10px 14px;
+  }
+}
