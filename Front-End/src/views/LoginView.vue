@@ -39,110 +39,66 @@ async function entrar() {
 </script>
 
 <template>
-  <div class="min-h-[calc(100vh-80px)] flex items-center justify-center p-4 bg-slate-50">
-    <div class="w-full max-w-[1000px] grid lg:grid-cols-2 bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/50 overflow-hidden border border-slate-100">
+  <div class="min-h-[calc(100vh-80px)] flex items-center justify-center bg-slate-50 px-4">
 
-      <!-- Lado Esquerdo: Branding/Infos -->
-      <section class="hidden lg:flex flex-col justify-between p-12 bg-slate-900 text-white relative overflow-hidden">
-        <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-          <div class="absolute -top-24 -left-24 w-96 h-96 bg-emerald-500 rounded-full blur-[100px]"></div>
-          <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-cyan-500 rounded-full blur-[100px]"></div>
-        </div>
+    <div class="w-full max-w-md bg-white rounded-3xl shadow-lg border border-slate-100 p-10">
 
-        <div class="relative z-10">
-          <RouterLink to="/" class="inline-flex items-center gap-2 text-2xl font-bold tracking-tight">
-            <span class="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center text-sm font-black">EC</span>
-            EcoColeta
-          </RouterLink>
+      <header class="text-center mb-10">
 
-          <div class="mt-20">
-            <h1 class="text-5xl font-bold leading-tight">
-              Transforme sua <br />
-              <span class="text-emerald-400 font-extrabold italic">cidade</span> hoje.
-            </h1>
-            <p class="mt-6 text-slate-400 text-lg max-w-sm leading-relaxed">
-              Junte-se a milhares de cidadãos que estão fazendo a diferença na zeladoria urbana e preservação ambiental.
-            </p>
+        <RouterLink to="/" class="inline-flex items-center gap-3 text-2xl font-bold text-slate-900">
+          <div
+            class="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center text-white text-xs font-black">
+            EC
+          </div>
+
+          EcoColeta
+        </RouterLink>
+
+        <h1 class="mt-8 text-3xl font-bold text-slate-900">
+          Bem-vindo
+        </h1>
+
+        <p class="mt-3 text-slate-500">
+          Faça login para acessar sua conta.
+        </p>
+
+      </header>
+
+      <form @submit.prevent="entrar" class="space-y-8">
+
+        <Input v-model="email" type="email" label="E-mail" placeholder="Digite seu e-mail" required />
+
+        <div>
+          <Input v-model="senha" type="password" label="Senha" placeholder="Digite sua senha" required />
+
+          <div class="mt-3 text-right">
+            <a href="#" class="text-sm text-emerald-600 hover:text-emerald-500">
+              Esqueceu sua senha?
+            </a>
           </div>
         </div>
 
-        <div class="relative z-10 grid grid-cols-2 gap-8">
-          <div>
-            <p class="text-3xl font-bold text-emerald-400">85%</p>
-            <p class="text-sm text-slate-400 mt-1">Taxa de resolução</p>
-          </div>
-          <div>
-            <p class="text-3xl font-bold text-emerald-400">+1.2k</p>
-            <p class="text-sm text-slate-400 mt-1">Coletas mensais</p>
-          </div>
-        </div>
-      </section>
+        <Button type="submit" :loading="carregando" full-width class="h-14">
+          Entrar
+        </Button>
 
-      <!-- Lado Direito: Formulário -->
-      <section class="p-8 sm:p-12 lg:p-16 flex flex-col justify-center">
-        <div class="w-full max-w-sm mx-auto">
-          <header class="mb-10">
-            <h2 class="text-3xl font-bold text-slate-900 tracking-tight">Bem-vindo de volta</h2>
-            <p class="text-slate-500 mt-2">Insira seus dados para acessar sua conta</p>
-          </header>
+      </form>
 
-          <form @submit.prevent="entrar" class="space-y-6">
-            <Input
-              v-model="email"
-              type="email"
-              label="E-mail"
-              placeholder="exemplo@email.com"
-              required
-            />
+      <p class="mt-8 text-center text-sm text-slate-500">
+        Não possui conta?
 
-            <div class="space-y-1">
-              <Input
-                v-model="senha"
-                type="password"
-                label="Senha"
-                placeholder="••••••••"
-                required
-              />
-              <div class="flex justify-end">
-                <a href="#" class="text-xs font-semibold text-emerald-600 hover:text-emerald-500 transition-colors">Esqueceu a senha?</a>
-              </div>
-            </div>
+        <RouterLink to="/cadastro" class="font-semibold text-emerald-600 hover:text-emerald-500">
+          Criar agora
+        </RouterLink>
+      </p>
 
-            <Button
-              type="submit"
-              :loading="carregando"
-              full-width
-              class="mt-4"
-            >
-              Acessar plataforma
-            </Button>
-
-            <div class="relative py-4">
-              <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-100"></div></div>
-              <div class="relative flex justify-center text-xs uppercase"><span class="bg-white px-2 text-slate-400 font-medium">Ou continue com</span></div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-               <button type="button" class="flex items-center justify-center gap-2 py-3 rounded-2xl border border-slate-200 hover:bg-slate-50 transition-colors text-sm font-semibold text-slate-700">
-                 Google
-               </button>
-               <button type="button" class="flex items-center justify-center gap-2 py-3 rounded-2xl border border-slate-200 hover:bg-slate-50 transition-colors text-sm font-semibold text-slate-700">
-                 Apple
-               </button>
-            </div>
-
-            <p class="text-center text-sm text-slate-500 pt-4">
-              Ainda não tem conta?
-              <RouterLink to="/cadastro" class="font-bold text-emerald-600 hover:text-emerald-500">Criar agora</RouterLink>
-            </p>
-          </form>
-
-          <div v-if="erro" class="mt-8 p-4 bg-red-50 border border-red-100 rounded-2xl animate-in fade-in slide-in-from-bottom-2">
-            <p class="text-sm text-red-600 font-medium text-center">{{ erro }}</p>
-          </div>
-        </div>
-      </section>
+      <div v-if="erro" class="mt-6 p-4 rounded-xl bg-red-50 border border-red-200">
+        <p class="text-sm text-red-600 text-center">
+          {{ erro }}
+        </p>
+      </div>
 
     </div>
+
   </div>
 </template>

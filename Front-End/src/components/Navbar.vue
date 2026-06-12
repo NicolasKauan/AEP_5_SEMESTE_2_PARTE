@@ -16,34 +16,46 @@ function logout() {
 
 <template>
   <header class="sticky top-0 z-50 border-b border-slate-100 bg-white/80 backdrop-blur-xl">
-    <div class="container mx-auto flex items-center justify-between px-6 py-4">
-      <RouterLink to="/" class="group flex items-center gap-3">
-        <div class="w-10 h-10 bg-emerald-600 rounded-2xl flex items-center justify-center text-sm font-black text-white shadow-lg shadow-emerald-600/20 group-hover:scale-110 transition-transform">
+    <div class="relative flex items-center justify-between w-full px-8 py-4">
+      <RouterLink to="/" class="group flex items-center gap-2.5">
+        <div
+          class="w-9 h-9 bg-emerald-600 rounded-xl flex items-center justify-center text-xs font-black text-white shadow-md shadow-emerald-600/10 group-hover:scale-105 transition-transform">
           EC
         </div>
-        <span class="text-xl font-black text-slate-900 tracking-tight">EcoColeta</span>
+        <span class="text-lg font-black text-slate-900 tracking-tight">EcoColeta</span>
       </RouterLink>
 
-      <nav class="hidden md:flex items-center gap-8">
-        <RouterLink to="/" class="text-sm font-bold text-slate-500 hover:text-emerald-600 transition-colors">Início</RouterLink>
+      <nav class="absolute left-1/2 -translate-x-1/2 hidden md:flex items-center gap-8">
+        <RouterLink to="/" class="text-sm font-bold text-slate-500 hover:text-emerald-600 transition-colors">
+          Início
+        </RouterLink>
+
         <template v-if="isAuthenticated">
-          <RouterLink :to="homeRoute()" class="text-sm font-bold text-slate-500 hover:text-emerald-600 transition-colors">Meu Painel</RouterLink>    
+          <RouterLink :to="homeRoute()"
+            class="text-sm font-bold text-slate-500 hover:text-emerald-600 transition-colors">
+            Meu Painel
+          </RouterLink>
         </template>
-        <RouterLink to="/denunciar-anonimo" class="text-sm font-bold text-slate-500 hover:text-emerald-600 transition-colors">Denunciar</RouterLink> 
+
+        <RouterLink to="/denunciar-anonimo"
+          class="text-sm font-bold text-slate-500 hover:text-emerald-600 transition-colors">
+          Denunciar
+        </RouterLink>
       </nav>
 
-      <div class="flex items-center gap-6">
+      <div class="flex items-center gap-4 sm:gap-6">
         <template v-if="isAuthenticated">
-          <div class="hidden sm:flex flex-col items-end">
-            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Usuário</span>
+          <div class="hidden sm:flex flex-col items-end leading-tight">
+            <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Usuário</span>
             <span class="text-sm font-bold text-slate-900">{{ nome }}</span>
           </div>
-          <Button @click="logout" variant="danger" class="!px-4 !py-2 !rounded-xl !text-xs">
+          <Button @click="logout" variant="danger" class="!px-3 !py-2 !rounded-xl !text-[10px] !font-bold">
             Sair
           </Button>
         </template>
         <template v-else>
-          <RouterLink to="/login" class="text-sm font-bold text-slate-600 hover:text-emerald-600 transition-colors">Entrar</RouterLink>
+          <RouterLink to="/login" class="text-sm font-bold text-slate-600 hover:text-emerald-600 transition-colors">
+            Entrar</RouterLink>
           <Button @click="$router.push('/cadastro')" class="!px-5 !py-2.5 !rounded-xl !text-xs">
             Começar
           </Button>
